@@ -1,0 +1,24 @@
+{
+  "name": "announce-discord-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WhipeeDip/Announce-Discord-Bot.git"
+  },
+  "author": "WhipeeDip",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/WhipeeDip/Announce-Discord-Bot/issues"
+  },
+  "homepage": "https://github.com/WhipeeDip/Announce-Discord-Bot#readme",
+  "dependencies": {
+    "discord.js": "^11.4.2",
+    "dotenv": "^6.2.0"
+  }
+}
