@@ -61,7 +61,7 @@ module.exports = function(discordClient) {
         if (!imgErr) {
             let fileName = path.basename(imgAnnounce);
             try {
-                await channel.send({
+                await foundChannel.send({
                     'files': [{
                         'attachment': imgAnnounce,
                         'name': fileName
