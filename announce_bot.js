@@ -73,7 +73,7 @@ module.exports = function(discordClient) {
             }
         }
 
-        let fullMsg = 'Announcement: \n' + message;
+        let fullMsg = '**Announcement:** \n' + message;
 
         if (roleAnnounce !== undefined) {
             let foundRole = guild.roles.find(role => role.name === roleAnnounce);
