@@ -19,12 +19,12 @@ module.exports = function(discordClient) {
     const CONSOLE_ROLE_ERR = 'Error while finding ROLE_ANNOUNCE. Check that the role exists.';
     const DISCORD_MSG_LIMIT = 1500;
 
-    let imgAnnounce;
-    let roleAnnounce;
-    let canAnnounce;
+    const imgAnnounce = process.env.IMG_ANNOUNCE;
+    const roleAnnounce = process.env.ROLE_ANNOUNCE;
+    const canAnnounce = process.env.ROLE_CAN_ANNOUNCE;
 
     const sendAnnouncement = async function(channel, channelId, message, member) {
-        if (member.roles.find(role => role.name === canAnnounce) === undefined) {
+        if (member.roles.find(role => role.name === canAnnounce) == undefined) {
             return;
         }
 
@@ -73,11 +73,11 @@ module.exports = function(discordClient) {
             }
         }
 
-        let fullMsg = 'ANNOUNCEMENT:\n' + message;
+        let fullMsg = 'Announcement: \n' + message;
 
         if (roleAnnounce !== undefined) {
             let foundRole = guild.roles.find(role => role.name === roleAnnounce);
-            if (foundRole === undefined) {
+            if (foundRole == undefined) {
                 console.error(CONSOLE_ROLE_ERR);
             } else {
                 fullMsg = foundRole + '\n' + fullMsg;
@@ -88,6 +88,11 @@ module.exports = function(discordClient) {
     };
 
     discordClient.on('message', async (msg) => {
+        // ignore self
+        if (msg.author.id === discordClient.user.id) {
+            return;
+        }
+
         let msgContent = msg.content;
         let channel = msg.channel;
 
@@ -113,10 +118,6 @@ module.exports = function(discordClient) {
 
     // init
     (() => {
-        imgAnnounce = process.env.IMG_ANNOUNCE;
-        roleAnnounce = process.env.ROLE_ANNOUNCE;
-        canAnnounce = process.env.ROLE_CAN_ANNOUNCE;
-
         if (imgAnnounce === undefined) {
             console.error(CONSOLE_IMG_NOT_SET);
         }
