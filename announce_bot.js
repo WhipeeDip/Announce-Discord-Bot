@@ -9,7 +9,7 @@ const path = require('path');
 // require() this and pass in the discord.js logged in client
 module.exports = function(discordClient) {
     const CMD_ANNOUNCE = '!announce ';
-    const MSG_INVALID_FORMAT = 'Format is !announce [#channel] [message]';
+    const MSG_INVALID_FORMAT = 'Format is `!announce [#channel] [message]`';
     const MSG_CHANNEL_NOT_FOUND = 'Channel was not found!';
     const MSG_TOO_LONG = 'Message was too long.';
     const CONSOLE_CAN_ANNOUNCE_NOT_SET='ROLE_CAN_ANNOUNCE not set, exiting.';
@@ -24,7 +24,7 @@ module.exports = function(discordClient) {
     const canAnnounce = process.env.ROLE_CAN_ANNOUNCE;
 
     const sendAnnouncement = async function(channel, channelId, message, member) {
-        if (member.roles.find(role => role.name === canAnnounce) == undefined) {
+        if (member.roles.cache.find(role => role.name === canAnnounce) == undefined) {
             return;
         }
 
@@ -34,7 +34,7 @@ module.exports = function(discordClient) {
         }
 
         let guild = channel.guild;
-        let foundChannel = guild.channels.get(channelId);
+        let foundChannel = guild.channels.cache.get(channelId);
         if (foundChannel === undefined) {
             channel.send(MSG_CHANNEL_NOT_FOUND).catch(console.error);
             return;
@@ -46,13 +46,13 @@ module.exports = function(discordClient) {
             if (!fs.existsSync(imgAnnounce)) {
                 console.error(CONSOLE_IMG_ERR);
                 imgErr = true;
-            }
-
-            try {
-                fs.accessSync(imgAnnounce, fs.constants.R_OK);
-            } catch (err) {
-                console.error(CONSOLE_IMG_ERR);
-                imgErr = true;
+            } else {
+                try {
+                    fs.accessSync(imgAnnounce, fs.constants.R_OK);
+                } catch (err) {
+                    console.error(CONSOLE_IMG_ERR);
+                    imgErr = true;
+                }
             }
         } else {
             imgErr = true;
@@ -76,14 +76,15 @@ module.exports = function(discordClient) {
         let fullMsg = '**Announcement:** \n' + message;
 
         if (roleAnnounce !== undefined) {
-            let foundRole = guild.roles.find(role => role.name === roleAnnounce);
+            let foundRole = guild.roles.cache.find(role => role.name === roleAnnounce);
             if (foundRole == undefined) {
                 console.error(CONSOLE_ROLE_ERR);
             } else {
-                fullMsg = foundRole + '\n' + fullMsg;
+                fullMsg = `${foundRole}\n${fullMsg}`;
             }
         }
 
+        console.log(`Sending message:\n\t${fullMsg}`);
         foundChannel.send(fullMsg).catch(console.error);
     };
 
@@ -97,6 +98,8 @@ module.exports = function(discordClient) {
         let channel = msg.channel;
 
         if (msgContent.startsWith(CMD_ANNOUNCE)) {
+            console.log(`Got announce command:\n\t${msgContent}`);
+
             let channelAndMsg = msgContent.substring(CMD_ANNOUNCE.length);
             let spaceIndex = channelAndMsg.indexOf(' ');
             if (spaceIndex === -1 || spaceIndex === (channelAndMsg.length - 1)) {
